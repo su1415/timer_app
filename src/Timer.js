@@ -52,6 +52,11 @@ const Timer = () => {
     if (!isWork) { setTimeLeft(newBreakTime); }
   };
 
+  const calculateProgress = () => {
+    const totalTime = isWork ? workTime : breakTime;
+    return ((totalTime - timeLeft) / totalTime) * 100;
+  };
+
   return (
     <div>
       <h2>{ isWork ? "Work Time" : "Break Time" }</h2>
@@ -75,6 +80,10 @@ const Timer = () => {
         /> [min]
       </div>
 
+      <div style={{ width: "100%", height: "20px", background: "#e0e0e0", borderRadius: "10px", overflow: "hidden", marginTop: "10px" }}>
+        <div style={{ width: `${calculateProgress()}%`, height: "100%", background: "#76c7c0" }}></div>
+      </div>
+      
       <button onClick={ () => setIsActive(true) }>Start</button>
       <button onClick={ () => setIsActive(false) }>Stop</button>
       <button onClick={ onResetClick }>Reset</button>
