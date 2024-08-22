@@ -6,6 +6,7 @@ const Timer = () => {
   const [timeLeft, setTimeLeft] = useState(workTime);
   const [isWork, setIsWork] = useState(true);
   const [isActive, setIsActive] = useState(false);
+  const [history, setHistory] = useState([]);
 
   useEffect(() => {
     if (Notification.permission !== "granted") {
@@ -13,6 +14,11 @@ const Timer = () => {
     }
 
     if (timeLeft <= 0) {
+      const sessionType = isWork ? "Work" : "Break";
+      const sessionTime = (isWork ? workTime : breakTime) / 60;
+      const timestamp = new Date().toLocaleTimeString();
+      addToHistory(sessionType, sessionTime, timestamp);
+
       if (isWork) {
         setTimeLeft(breakTime);
         setIsWork(false);
@@ -69,6 +75,10 @@ const Timer = () => {
     }
   };
 
+  const addToHistory = (sessionType, sessionTime, timestamp) => {
+    setHistory([...history, { sessionType, sessionTime, timestamp }]);
+  };
+
   return (
     <div>
       <h2>{ isWork ? "Work Time" : "Break Time" }</h2>
@@ -99,6 +109,15 @@ const Timer = () => {
       <button onClick={ () => setIsActive(true) }>Start</button>
       <button onClick={ () => setIsActive(false) }>Stop</button>
       <button onClick={ onResetClick }>Reset</button>
+
+      <h3>History</h3>
+      <ul>
+        { history.map((entry, index) => (
+          <li key={ index }>
+            { entry.timestamp } - { entry.sessionType } Session ( { entry.sessionTime } minutes )
+          </li>
+        )) }
+      </ul>
     </div>
   );
 };
