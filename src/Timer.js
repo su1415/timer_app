@@ -8,13 +8,19 @@ const Timer = () => {
   const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
+    if (Notification.permission !== "granted") {
+      Notification.requestPermission();
+    }
+
     if (timeLeft <= 0) {
       if (isWork) {
         setTimeLeft(breakTime);
         setIsWork(false);
+        sendNotification("Work session complete! Time for a break.");
       } else {
         setTimeLeft(workTime);
         setIsWork(true);
+        sendNotification("Break is over! Time to work.");
       }
     }
 
@@ -57,6 +63,12 @@ const Timer = () => {
     return ((totalTime - timeLeft) / totalTime) * 100;
   };
 
+  const sendNotification = (message) => {
+    if (Notification.permission === "granted") {
+      new Notification(message);
+    }
+  };
+
   return (
     <div>
       <h2>{ isWork ? "Work Time" : "Break Time" }</h2>
@@ -83,7 +95,7 @@ const Timer = () => {
       <div style={{ width: "100%", height: "20px", background: "#e0e0e0", borderRadius: "10px", overflow: "hidden", marginTop: "10px" }}>
         <div style={{ width: `${calculateProgress()}%`, height: "100%", background: "#76c7c0" }}></div>
       </div>
-      
+
       <button onClick={ () => setIsActive(true) }>Start</button>
       <button onClick={ () => setIsActive(false) }>Stop</button>
       <button onClick={ onResetClick }>Reset</button>
