@@ -1,15 +1,22 @@
 import React, { useState, useEffect } from "react";
 
 const workTime = 25 * 60;
+const breakTime = 5 * 60;
 
 const Timer = () => {
   const [timeLeft, setTimeLeft] = useState(workTime);
+  const [isWork, setIsWork] = useState(true);
   const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
     if (timeLeft <= 0) {
-      setIsActive(false);
-      return;
+      if (isWork) {
+        setTimeLeft(breakTime);
+        setIsWork(false);
+      } else {
+        setTimeLeft(workTime);
+        setIsWork(true);
+      }
     }
 
     let interval = null;
@@ -30,12 +37,14 @@ const Timer = () => {
 
   const onResetClick = () => {
     setTimeLeft(workTime);
+    setIsWork(true);
     setIsActive(false);
   };
 
   return (
     <div>
-      <h2>{ formatTime(timeLeft) }</h2>
+      <h2>{ isWork ? "Work Time" : "Break Time" }</h2>
+      <h3>{ formatTime(timeLeft) }</h3>
       <button onClick={ () => setIsActive(true) }>Start</button>
       <button onClick={ () => setIsActive(false) }>Stop</button>
       <button onClick={ onResetClick }>Reset</button>
