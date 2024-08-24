@@ -15,37 +15,38 @@ const Timer = () => {
       Notification.requestPermission();
     }
 
-
-    if (isActive && startTime) {
-      const interval = setInterval(() => {
-        const currentTime = new Date().getTime();
-        const elapsedTime = Math.floor((currentTime - startTime) / 1000);
-        const remainingTime = (isWork ? workTime : breakTime) - elapsedTime;
-
-        if (remainingTime > 0) {
-          setTimeLeft(remainingTime);
-        } else {
-          const sessionType = isWork ? "Work" : "Break";
-          const sessionTime = (isWork ? workTime : breakTime) / 60;
-          const timestamp = new Date().toLocaleTimeString();
-          addToHistory(sessionType, sessionTime, timestamp);
-
-          if (isWork) {
-            setStartTime(currentTime);
-            setTimeLeft(breakTime);
-            setIsWork(false);
-            sendNotification("Work session complete! Time for a break.");
-          } else {
-            setStartTime(currentTime);
-            setTimeLeft(workTime);
-            setIsWork(true);
-            sendNotification("Break is over! Time to work.");
-          }
-        }
-      }, 1000);
-
-      return () => clearInterval(interval);
+    if (!isActive || !startTime) {
+      return;
     }
+
+    const interval = setInterval(() => {
+      const currentTime = new Date().getTime();
+      const elapsedTime = Math.floor((currentTime - startTime) / 1000);
+      const remainingTime = (isWork ? workTime : breakTime) - elapsedTime;
+
+      if (remainingTime > 0) {
+        setTimeLeft(remainingTime);
+      } else {
+        const sessionType = isWork ? "Work" : "Break";
+        const sessionTime = (isWork ? workTime : breakTime) / 60;
+        const timestamp = new Date().toLocaleTimeString();
+        addToHistory(sessionType, sessionTime, timestamp);
+
+        if (isWork) {
+          setStartTime(currentTime);
+          setTimeLeft(breakTime);
+          setIsWork(false);
+          sendNotification("Work session complete! Time for a break.");
+        } else {
+          setStartTime(currentTime);
+          setTimeLeft(workTime);
+          setIsWork(true);
+          sendNotification("Break is over! Time to work.");
+        }
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
   }, [isActive, startTime, isWork, workTime, breakTime]);
 
   const formatTime = (second) => {
