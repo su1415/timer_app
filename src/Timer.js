@@ -27,22 +27,7 @@ const Timer = () => {
       if (remainingTime > 0) {
         setTimeLeft(remainingTime);
       } else {
-        const sessionType = isWork ? "Work" : "Break";
-        const sessionTime = (isWork ? workTime : breakTime) / 60;
-        const timestamp = new Date().toLocaleTimeString();
-        addToHistory(sessionType, sessionTime, timestamp);
-
-        if (isWork) {
-          setStartTime(currentTime);
-          setTimeLeft(breakTime);
-          setIsWork(false);
-          sendNotification("Work session complete! Time for a break.");
-        } else {
-          setStartTime(currentTime);
-          setTimeLeft(workTime);
-          setIsWork(true);
-          sendNotification("Break is over! Time to work.");
-        }
+        handleSessionEnd(currentTime);
       }
     }, 1000);
 
@@ -53,6 +38,33 @@ const Timer = () => {
     const minutes = Math.floor(second / 60);
     const remainingSeconds = second % 60;
     return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`
+  };
+
+  const handleSessionEnd = (currentTime) => {
+    const sessionType = isWork ? "Work" : "Break";
+    const sessionTime = (isWork ? workTime : breakTime) / 60;
+    const timestamp = new Date().toLocaleTimeString();
+    addToHistory(sessionType, sessionTime, timestamp);
+
+    if (isWork) {
+      startBreakSession(currentTime);
+    } else {
+      startWorkSession(currentTime);
+    }
+  };
+
+  const startWorkSession = (currentTime) => {
+    setStartTime(currentTime);
+    setTimeLeft(workTime);
+    setIsWork(true);
+    sendNotification("Break is over! Time to work.");
+  };
+
+  const startBreakSession = (currentTime) => {
+    setStartTime(currentTime);
+    setTimeLeft(breakTime);
+    setIsWork(false);
+    sendNotification("Work session complete! Time for a break.");
   };
 
   const onStartClick = () => {
