@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import "./Timer.css";
 
 const Timer = () => {
   const [workTime, setWorkTime] = useState(25 * 60);
@@ -80,16 +81,17 @@ const Timer = () => {
   };
 
   return (
-    <div>
-      <h2>{ isWork ? "Work Time" : "Break Time" }</h2>
-      <h3>{ formatTime(timeLeft) }</h3>
+    <div className="timer-container">
+      <h2 className="session-title">{ isWork ? "Work Time" : "Break Time" }</h2>
+      <h3 className="time-display">{ formatTime(timeLeft) }</h3>
 
-      <div>
+      <div className="settings">
         <label>Work Time: </label>
         <input
           type="number"
           value={ workTime / 60 }
           onChange={ handleWorkTimeChange }
+          className="time-input"
         /> [min]
       </div>
 
@@ -99,21 +101,22 @@ const Timer = () => {
           type="number"
           value={ breakTime / 60 }
           onChange={ handleBreakTimeChange }
+          className="time-input"
         /> [min]
       </div>
 
-      <div style={{ width: "100%", height: "20px", background: "#e0e0e0", borderRadius: "10px", overflow: "hidden", marginTop: "10px" }}>
-        <div style={{ width: `${calculateProgress()}%`, height: "100%", background: "#76c7c0" }}></div>
+      <div className="progress-bar">
+        <div className="progress-fill" style={{ width: `${calculateProgress()}%` }}></div>
       </div>
 
-      <button onClick={ () => setIsActive(true) }>Start</button>
-      <button onClick={ () => setIsActive(false) }>Stop</button>
-      <button onClick={ onResetClick }>Reset</button>
+      <button className="control-button start" onClick={ () => setIsActive(true) }>Start</button>
+      <button className="control-button stop" onClick={ () => setIsActive(false) }>Stop</button>
+      <button className="control-button reset" onClick={ onResetClick }>Reset</button>
 
       <h3>History</h3>
-      <ul>
+      <ul className="history-list">
         { history.map((entry, index) => (
-          <li key={ index }>
+          <li key={ index } className="history-item">
             { entry.timestamp } - { entry.sessionType } Session ( { entry.sessionTime } minutes )
           </li>
         )) }
